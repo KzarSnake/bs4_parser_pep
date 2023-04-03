@@ -24,9 +24,7 @@
 
 ```
 git clone https://github.com/KzarSnake/bs4_parser_pep.git
-```
 
-```
 cd bs4_parser_pep
 ```
 
@@ -34,9 +32,7 @@ Cоздать и активировать виртуальное окружен�
 
 ```
 python -m venv env
-```
 
-```
 source env/bin/activate
 ```
 
@@ -44,9 +40,7 @@ source env/bin/activate
 
 ```
 python -m pip install --upgrade pip
-```
 
-```
 pip install -r requirements.txt
 ```
 

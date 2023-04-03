@@ -18,8 +18,6 @@ from utils import find_tag, get_response
 def whats_new(session):
     whats_new_url = urljoin(MAIN_DOC_URL, 'whatsnew/')
     response = get_response(session, whats_new_url)
-    if response is None:
-        return
     soup = BeautifulSoup(response.text, features='lxml')
     main_div = find_tag(soup, 'section', attrs={'id': 'what-s-new-in-python'})
     div_with_ul = main_div.find(
@@ -34,8 +32,6 @@ def whats_new(session):
         url = version_a_tag['href']
         full_url = urljoin(whats_new_url, url)
         response = get_response(session, full_url)
-        if response is None:
-            return
         soup = BeautifulSoup(response.text, features='lxml')
         tag_h1 = find_tag(soup, 'h1')
         tag_dl = find_tag(soup, 'dl')
@@ -46,9 +42,7 @@ def whats_new(session):
 
 def latest_versions(session):
     response = get_response(session, MAIN_DOC_URL)
-    if response is None:
-        return
-    logging.info('Getting latest version started')
+    logging.info('Сбор последних версий начат!')
     soup = BeautifulSoup(response.text, features='lxml')
     sidebar = soup.find(name='div', attrs={'class': 'sphinxsidebarwrapper'})
     ul_tags = sidebar.find_all(name='ul')
@@ -57,26 +51,21 @@ def latest_versions(session):
             a_tags = ul.find_all('a')
             break
     else:
-        raise ParserFindTagException('Found nothing')
+        raise ParserFindTagException('Ничего не найдено!')
     results = [('Ссылка на документацию', 'Версия', 'Статус')]
     pattern = r'Python (?P<version>\d\.\d+) \((?P<status>.*)\)'
     for a_tag in tqdm(a_tags):
         link = a_tag['href']
         text_match = re.search(pattern, a_tag.text)
-        if text_match is not None:
-            version, status = text_match.groups()
-        else:
-            version, status = a_tag.text, ''
+        version, status = text_match.groups() if text_match else a_tag.text, ''
         results.append((link, version, status))
-    logging.info('Getting latest version finished')
+    logging.info('Сбор последних версий закончен!')
     return results
 
 
 def download(session):
     downloads_url = urljoin(MAIN_DOC_URL, 'download.html')
     response = get_response(session, downloads_url)
-    if response is None:
-        return
     soup = BeautifulSoup(response.text, 'lxml')
 
     main_tag = soup.find('div', {'role': 'main'})
@@ -101,8 +90,6 @@ def download(session):
 
 def pep(session):
     response = get_response(session, PEP_URL)
-    if response is None:
-        return
     soup = BeautifulSoup(response.text, 'lxml')
     div_section = find_tag(soup, 'section', attrs={'id': 'numerical-index'})
     tr_rows = BeautifulSoup.find_all(div_section, 'tr')
@@ -137,10 +124,10 @@ def pep(session):
             count_status[status_pep_page] = 1
         if status_pep_page not in EXPECTED_STATUS[preview_status]:
             error_message = (
-                f'Несовпадающие статусы:\n'
+                'Несовпадающие статусы:\n'
                 f'{url}\n'
                 f'Статус в карточке: {status_pep_page}\n'
-                f'Ожидаемые статусы: '
+                'Ожидаемые статусы: '
                 f'{EXPECTED_STATUS[preview_status]}'
             )
             logging.warning(error_message)
