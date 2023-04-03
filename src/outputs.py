@@ -4,15 +4,15 @@ import logging
 
 from prettytable import PrettyTable
 
-from constants import BASE_DIR, DATETIME_FORMAT, FILE, OUTPUT_FORMAT, PRETTY
+from constants import BASE_DIR, DATETIME_FORMAT, FILE, PRETTY
 
 
-def default_output(results):
+def default_output(results, *args):
     for row in results:
         print(*row)
 
 
-def pretty_output(results):
+def pretty_output(results, *args):
     table = PrettyTable()
     table.field_names = results[0]
     table.align = 'l'
@@ -37,7 +37,7 @@ def file_output(results, cli_args):
 OUTPUT_FORMAT = {
     PRETTY: pretty_output,
     FILE: file_output,
-    '': default_output,
+    None: default_output,
 }
 
 
