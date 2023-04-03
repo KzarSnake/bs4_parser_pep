@@ -9,7 +9,7 @@ def get_response(session, url):
     try:
         response = session.get(url)
         if response is None:
-            error_msg = f'Ответ пуст'
+            error_msg = 'Ответ пуст'
             logging.error(error_msg, stack_info=True)
             raise RequestIsNoneException(error_msg)
         response.encoding = 'utf-8'
